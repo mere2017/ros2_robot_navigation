@@ -9,7 +9,7 @@ def generate_launch_description():
     autopartol_robot_path = get_package_share_directory('cpp04_autopartol_robot_py')
     default_partol_config_path = autopartol_robot_path + '/config/partol_config.yaml'
 
-    # 加载节点
+    # 加载节点，需要添加参数文件
     action_partol_node = Node(package = 'cpp04_autopartol_robot_py', executable = 'partol_node',
                               output = 'both', parameters = [default_partol_config_path]
     )
