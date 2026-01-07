@@ -1,0 +1,100 @@
+# 控制器管理
+controller_manager:
+  ros__parameters:
+    update_rate: 200  # Hz
+    use_sim_time: true
+
+    # 添加状态发布控制器：替代 launch 文件中 joint_state_publisher 的节点发布
+    car_joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+      # 还需要在 launch 文件中 加载并激活 才能用，并且要求在 gazebo 加载 robot 之后启动
+      # action_load_joint_state_controller = ExecuteProcess(
+      #   cmd = 'ros2 control load_controller car_joint_state_broadcaster --set-state active'.split(' '),
+      #   output = "both",
+      #   shell = True
+      # )
+      # RegisterEventHandler(
+      #     event_handler = OnProcessExit(
+      #         target_action = action_spawn_entity,
+      #         on_exit = [action_load_joint_state_controller]
+      #     )
+      # )
+    
+    # 添加力控（使用力控制器控制轮子）
+    car_effort_controller:
+      type: effort_controllers/JointGroupEffortController
+
+    # 添加两轮差速控制器
+    car_diff_drive_controller:
+      type: diff_drive_controller/DiffDriveController
+
+
+
+# 配置 力控
+car_effort_controller:
+  ros__parameters:
+    joints:
+      - left_back_to_base_link
+      - right_back_to_base_link
+    command_interfaces:
+      - effort
+    state_interfaces:
+      - position
+      - velocity
+      - effort
+# 还需要在 launch 文件中 加载并激活 才能用，并在上一个 controller 之后依次启动
+# action_load_effort_controller = ExecuteProcess(
+#         cmd = 'ros2 control load_controller car_effort_controller --set-state active'.split(' '),
+#         output = "both",
+#         shell = True
+#     )
+# RegisterEventHandler(
+#     event_handler = OnProcessExit(
+#         target_action = action_load_joint_state_controller,
+#         on_exit = [action_load_effort_controller]
+#     )
+# )
+
+
+# 配置 两轮差速控制器
+car_diff_drive_controller:
+  ros__parameters:
+    left_wheel_names: ["left_back_to_base_link", "left_front_to_base_link"]
+    right_wheel_names: ["right_back_to_base_link", "right_front_to_base_link"]
+
+    # 左右轮子间距
+    wheel_separation: 1.20
+    #wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
+    # 轮子半径
+    wheel_radius: 0.2
+
+    # 校准里程计 odom 所使用的 3个参数：左右轮间距倍数、左右轮半径倍数（或增益）
+    wheel_separation_multiplier: 2.2
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+
+    publish_rate: 150.0
+    odom_frame_id: odom
+    base_frame_id: base_footprint
+    pose_covariance_diagonal : [0.0001, 0.0001, 0.0, 0.0, 0.0, 0.001]  # 协方差噪声
+    twist_covariance_diagonal: [0.0001, 0.0, 0.0, 0.0, 0.0, 0.001]  # 协方差噪声
+
+    open_loop: true  # 开环控制
+    enable_odom_tf: true  # 里程计 odom 的 tf 发布
+
+    cmd_vel_timeout: 0.5  # 接收 cmd_vel 的超时时间（秒），若超时则停止运动
+    #publish_limited_velocity: true
+    use_stamped_vel: false  # 是否使用 stamped_twist 消息来代表速度命令
+    #velocity_rolling_window_size: 10
+# 还需要在 launch 文件中 加载并激活 才能用，同时需要关掉 力控、在上一个 controller 之后依次启动
+# action_load_diff_drive_controller = ExecuteProcess(
+#     cmd = 'ros2 control load_controller car_diff_drive_controller --set-state active'.split(' '),
+#     output = "both",
+#     shell = True
+# )
+# RegisterEventHandler(
+#     event_handler = OnProcessExit(
+#         target_action = action_load_joint_state_controller,
+#         on_exit = [action_load_diff_drive_controller]
+#     )
+# )

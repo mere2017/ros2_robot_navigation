@@ -1,0 +1,101 @@
+<!-- 雷达实现 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 声明变量 -->
+    <xacro:property name = "laser_radius" value = "0.25"/>
+    <xacro:property name = "laser_height" value = "0.2"/>
+    <xacro:property name = "laser_weight" value = "4.0"/>
+    <!-- laser 距离 base_link 的偏移量 -->
+    <xacro:property name = "laser_joint_x" value = "0"/>
+    <xacro:property name = "laser_joint_y" value = "0"/>
+    <xacro:property name = "laser_joint_z" value = "${(laser_height + car_height) / 2}"/>
+    <!-- 颜色 -->
+    <material name = "blue">
+        <color rgba="0.2 0.2 0.8 1.0"/>
+    </material>
+
+    <!-- 设置 laser + joint -->
+    <link name = "laser">
+        <visual>
+            <geometry>
+                <cylinder radius="${laser_radius}" length="${laser_height}"/>
+            </geometry>
+            <material name = "blue"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder radius="${laser_radius + 0.01}" length="${laser_height + 0.01}"/>
+            </geometry>
+        </collision>
+        <!-- 添加质量和惯性 -->
+        <xacro:cylinder_inertia m = "${laser_weight}" r = "${wheel_radius}" h = "${laser_height}"
+                                xyz = "0 0 0" rpy = "0 0 0" />
+    </link>
+
+    <!-- 将 laser 与 base_link 关联 -->
+    <joint name="laser_to_base_link" type="fixed">
+        <parent link="base_link"/>
+        <child link="laser"/>
+        <origin xyz="${laser_joint_x} ${laser_joint_y} ${laser_joint_z}"/>
+    </joint>
+
+    <!-- 设置 gazebo 标签 -->
+    <gazebo reference = "laser">
+        <material>Gazebo/Blue</material>
+        <!-- 设置传感器 -->
+        <sensor name="laser_sensor" type="ray">
+            <!-- 传感器相对于 laser 的 xyz + rpy -->
+            <pose>0 0 0 0 0 0</pose>
+            <!-- 一直开启 -->
+            <always_on>true</always_on>
+            <!-- 在 gazebo 上可视化相机所拍摄到的内容 -->
+            <visualize>true</visualize>
+            <!-- 更新频率 -->
+            <update_rate>50</update_rate>
+
+            <!-- laser 插件 -->
+            <plugin name="laser_scanner" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                    <namespace>/</namespace>
+                    <!-- out 话题的重映射 -->
+                    <remapping>~/out:=scan</remapping>
+                </ros>
+                <!-- 指定话题输出类型（消息接口） -->
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <!-- 选择 link 设置的名称 -->
+                <frame_name>laser</frame_name>
+            </plugin>
+
+            <!-- 激光传感器配置 -->
+            <ray>
+                <!-- 设置扫描范围 -->
+                <scan>
+                    <horizontal>
+                        <!-- 采样点 -->
+                        <samples>360</samples>
+                        <!-- 分辨率 -->
+                        <resolution>1.000000</resolution>
+                        <!-- 最小和最大角度（弧度） -->
+                        <min_angle>0</min_angle>
+                        <max_angle>6.2831852</max_angle>
+                    </horizontal>
+                </scan>
+                <!-- 设置扫描距离 -->
+                <range>
+                    <!-- min 就是 laser 的扫描盲区 -->
+                    <min>0.5</min>
+                    <max>8.0</max>
+                    <!-- 分辨率，也是 laser 的精度 -->
+                    <resolution>0.050000</resolution>
+                </range>
+                <!-- 设置噪声 -->
+                <noise>
+                    <!-- 高斯噪声、均值 和 标准差 -->
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+        </sensor>
+    </gazebo>
+</robot>

@@ -1,0 +1,80 @@
+<!-- ros2_control 插件 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- type 设为 system，= 传感器 + 执行器 -->
+    <ros2_control name="CarGazeboSystem" type="system"> 
+        <hardware>
+            <!-- 设置驱动库 -->
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+        <joint name="left_back_to_base_link">
+            <!-- 命令接口：速度 velocity 和 力 effort-->
+            <command_interface name="velocity">
+                <param name="min">-1</param>
+                <param name="max">1</param>
+            </command_interface>
+            <command_interface name="effort">
+                <param name="min">-0.1</param>
+                <param name="max">0.1</param>
+            </command_interface>
+            <!-- 状态接口：位置、速度和力 -->
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+        
+        <joint name="right_back_to_base_link">
+            <command_interface name="velocity">
+                <param name="min">-1</param>
+                <param name="max">1</param>
+            </command_interface>
+            <command_interface name="effort">
+                <param name="min">-0.1</param>
+                <param name="max">0.1</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+
+        <joint name="left_front_to_base_link">
+            <command_interface name="velocity">
+                <param name="min">-1</param>
+                <param name="max">1</param>
+            </command_interface>
+            <command_interface name="effort">
+                <param name="min">-0.1</param>
+                <param name="max">0.1</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+
+        <joint name="right_front_to_base_link">
+            <command_interface name="velocity">
+                <param name="min">-1</param>
+                <param name="max">1</param>
+            </command_interface>
+            <command_interface name="effort">
+                <param name="min">-0.1</param>
+                <param name="max">0.1</param>
+            </command_interface>
+            <state_interface name="position" />
+            <state_interface name="velocity" />
+            <state_interface name="effort" />
+        </joint>
+    </ros2_control>
+
+    <!-- ros2_control 标签 -->
+    <gazebo>
+        <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+            <parameters>$(find cpp01_nav)/config/ros2_controller.yaml</parameters>
+            <!-- 话题重映射：里程计 odom 和 速度指令 cmd_vel -->
+            <ros>
+                <remapping>/car_diff_drive_controller/odom:=/odom</remapping>
+                <remapping>/car_diff_drive_controller/cmd_vel_unstamped:=/cmd_vel</remapping>
+            </ros>
+        </plugin>
+    </gazebo>
+</robot>

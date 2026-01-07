@@ -1,0 +1,49 @@
+<!-- 惯性矩阵 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- 立方体惯性矩阵 -->
+    <xacro:macro name="box_inertia" params="m l w h xyz rpy">
+        <inertial>
+            <!-- 重心偏移：一般与 visual 里面的 origin 参数保持一致 -->
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <!-- 质量 -->
+            <mass value="${m}" />
+            <!-- 惯性矩阵 -->
+            <inertia ixx="${(m/12) * (h*h + l*l)}" ixy="0.0" ixz="0.0"
+                     iyy="${(m/12) * (w*w + l*l)}" iyz="0.0"
+                     izz="${(m/12) * (w*w + h*h)}" />
+        </inertial>
+    </xacro:macro>
+
+
+    <!-- 圆柱体惯性矩阵 -->
+    <xacro:macro name="cylinder_inertia" params="m r h xyz rpy">
+        <inertial>
+            <!-- 重心偏移：一般与 visual 里面的 origin 参数保持一致 -->
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <!-- 质量 -->
+            <mass value="${m}" />
+            <!-- 惯性矩阵 -->
+            <inertia ixx="${(m/12) * (3*r*r + h*h)}" ixy="0" ixz="0"
+                     iyy="${(m/12) * (3*r*r + h*h)}" iyz="0"
+                     izz="${(m/2) * (r*r)}" />
+        </inertial>
+    </xacro:macro>
+
+
+    <!-- 球体惯性矩阵 -->
+    <xacro:macro name="sphere_inertia" params="m r xyz rpy">
+        <inertial>
+            <!-- 重心偏移：一般与 visual 里面的 origin 参数保持一致 -->
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <!-- 质量 -->
+            <mass value="${m}" />
+            <!-- 惯性矩阵 -->
+            <inertia ixx="${(2/5) * m * (r*r)}" ixy="0.0" ixz="0.0"
+                     iyy="${(2/5) * m * (r*r)}" iyz="0.0"
+                     izz="${(2/5) * m * (r*r)}" />
+        </inertial>
+    </xacro:macro>
+    
+</robot>

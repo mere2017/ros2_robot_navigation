@@ -1,0 +1,12 @@
+<!-- 主文件 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="car">
+    <xacro:include filename="car_base.urdf.xacro"/>
+    <xacro:include filename="car_camera.urdf.xacro"/>
+    <xacro:include filename="car_laser.urdf.xacro"/>
+
+    <!-- 插件 -->
+    <!-- <xacro:include filename="gazebo_control_plugin.xacro"/> -->
+    <xacro:include filename="car_ros2_control.xacro"/>
+
+</robot>

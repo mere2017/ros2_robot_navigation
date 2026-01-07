@@ -1,0 +1,30 @@
+# 通过 ros2 param dump /节点node名称（/partol_robot），自动生成，然后复制过来就行
+
+# 在 setup.py 配置文件中添加：('share/' + package_name + "/config", ['config/partol_config.yaml']),
+
+# 调用时传参：
+#    ros2 run cpp04_autopartol_robot_py partol_node --ros-args --params-file /home/mere/ws03_navigation/install/cpp04_autopartol_robot_py/share/cpp04_autopartol_robot_py/config/partol_config.yaml
+
+/partol_robot:
+  ros__parameters:
+    initial_point:
+    - 0.0
+    - 0.0
+    - 0.0
+    target_points:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 2.0
+    - 1.0
+    - 1.57
+    - 1.0
+    - 2.0
+    - 1.57
+    - -2.0
+    - -1.0
+    - 0.0
+    - -4.5
+    - -3.0
+    - 3.14    
+    use_sim_time: false

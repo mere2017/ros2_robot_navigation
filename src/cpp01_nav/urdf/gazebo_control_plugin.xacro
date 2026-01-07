@@ -1,0 +1,27 @@
+<!-- 两轮差速插件 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <gazebo>
+        <plugin name='diff_drive_controller' filename='libgazebo_ros_diff_drive.so'>
+            <update_rate>50</update_rate>
+            <!-- 设置左右车轮的 joint -->
+            <left_joint>left_back_to_base_link</left_joint>
+            <right_joint>right_back_to_base_link</right_joint>
+            <!-- separation = 左右车轮间距，diameter = 轮子直径 -->
+            <wheel_separation>1.2</wheel_separation>
+            <wheel_diameter>0.4</wheel_diameter>
+            <!-- 输出 -->
+            <!-- 里程计输出 -->
+            <publish_odom>true</publish_odom>
+            <publish_odom_tf>true</publish_odom_tf>
+            <!-- 发布轮子的旋转，可以在 rviz2 中可视化 -->
+            <publish_wheel_tf>true</publish_wheel_tf>
+            <odometry_topic>odom</odometry_topic>
+
+            <!-- odometry_frame 相当于 -frame-id， robot_base_frame 相当于 -child-frame-id -->
+            <odometry_frame>odom</odometry_frame>
+            <!-- 根坐标系：选择 base_footprint -->
+            <robot_base_frame>base_footprint</robot_base_frame>
+        </plugin>
+    </gazebo>
+</robot>

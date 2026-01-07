@@ -1,0 +1,59 @@
+<!-- 摄像头实现 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 声明变量 -->
+    <xacro:property name = "camera_length" value = "0.2"/>
+    <xacro:property name = "camera_width" value = "0.2"/>
+    <xacro:property name = "camera_height" value = "0.13"/>
+    <xacro:property name = "camera_weight" value = "2.0"/>
+    <!-- camera 距离 base_link 的偏移量 -->
+    <xacro:property name = "camera_joint_x" value = "${car_length / 2}"/>
+    <xacro:property name = "camera_joint_y" value = "0.0"/>
+    <xacro:property name = "camera_joint_z" value = "${(car_height - camera_height) / 2}"/>
+
+
+    <!-- 设置 camera + joint -->
+    <link name="camera">
+        <visual>
+            <geometry>
+                <box size="${camera_length} ${camera_width} ${camera_height}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${camera_length + 0.01} ${camera_width + 0.01} ${camera_height + 0.01}"/>
+            </geometry>
+        </collision>
+        <!-- 添加质量和惯性 -->
+        <xacro:box_inertia m = "${camera_weight}" l = "${camera_length}" w = "${camera_width}" h = "${camera_height}"
+                           xyz = "0 0 0" rpy = "0 0 0" />
+    </link>
+
+    <!-- 将 camera 与 base_link 关联 -->
+    <joint name="camera_to_base_link" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera"/>
+        <origin xyz="${camera_joint_x} ${camera_joint_y} ${camera_joint_z}"/>
+    </joint>
+
+    <!-- 设置 gazebo 标签 -->
+    <gazebo reference = "camera">
+        <material>Gazebo/Red</material>
+        <!-- 设置传感器 -->
+        <sensor name = "camera_sensor" type = "camera">
+            <!-- 传感器相对于 camera 的 xyz + rpy -->
+            <pose>0 0 0 0 0 0</pose>
+            <!-- 在 gazebo 上可视化相机所拍摄到的内容 -->
+            <visualize>true</visualize>
+            <!-- 更新频率 -->
+            <update_rate>10</update_rate>
+
+            <!-- 相机插件 -->
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <!-- 选择 link 设置的名称 -->
+                <frame_name>camera</frame_name>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+</robot>
