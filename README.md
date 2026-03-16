@@ -7,12 +7,11 @@
 该巡检机器人要能够在不同的目标点之间进行循环移动，每到达一个目标点后首先通过语音播放到达的目标点信息，接着通过摄像头采集一张实时的图像并保存到本地。
 
 各功能包功能如下：
-- fishbot_description 机器人描述文件，包含仿真相关配置
-- fishbot_navigation2 机器人导航配置文件
-- fishbot_application 机器人导航应用 Python 代码
-- fishbot_application_cpp 机器人导航应用 C++ 代码
-- autopatrol_interfaces  自动巡检相关接口
-- autopatrol_robot  自动巡检实现功能包
+- autopatrol_interfaces 自动巡检机器人接口文件
+- cpp01_nav 机器人导航配置文件
+- cpp02_application 机器人导航应用 Python 代码
+- cpp03_application_cpp 机器人导航应用 C++ 代码
+- cpp04_autopatrol_robot_py  自动巡检实现功能包 Python 代码
 
 ## 2.使用方法
 
@@ -61,14 +60,14 @@ colcon build
 
 ```
 source install/setup.bash
-ros2 launch fishbot_description gazebo_sim.launch.py
+ros2 launch cpp01_nav gazebo_sim_launch.py
 ```
 
 运行导航
 
 ```
 source install/setup.bash
-ros2 launch fishbot_navigation2 navigation2.launch.py
+ros2 launch cpp01_nav navigation2_launch.py
 ```
 
 运行自动巡检
@@ -80,4 +79,4 @@ ros2 launch autopatrol_robot autopatrol.launch.py
 
 ## 3.作者
 
-- [fishros](https://github.com/fishros)
+- [MeRe2017](https://github.com/mere2017)
